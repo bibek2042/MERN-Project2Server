@@ -1,6 +1,7 @@
 import {Request,Response} from "express"
 import User from "../database/models/userModel"
 import bcrypt from 'bcrypt'
+import generateToken from "../services/generateToken"
 
 
 class AuthController{
@@ -54,8 +55,11 @@ class AuthController{
                 })
             }else{
                 // if password milyo vane --> token generate(jwt)    
+
+                const token = generateToken(user.id)
                 res.status(200).json({
                     message : "Logged in success 🥰", 
+                    token
                 
                 })
        }
