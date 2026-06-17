@@ -16,14 +16,39 @@ class AuthController{
             })
              return
         }
-
-        await User.create({
-            username,
-            email,
-            password : bcrypt.hashSync(password,10),
+   // check whether that email already exist or not 
+        const [data] =  await User.findAll({
+            where : {
+                email : email
+            }
         })
-        res.status(200).json({
-            message : "User register successfully"
+        if(data){
+             res.status(400).json({
+                message : "Please try again later !!!"
+            })
+            return
+        }
+        // data --> users table ma insert garne 
+        const user = await User.create({
+            username, 
+            email, 
+            password : bcrypt.hashSync(password,10), 
+    
+        })
+        await sendMail({
+            to : email, 
+            subject : "Registration successfull on Digital Dokaan", 
+            text : "Welcome to Digital Dokaan, Thank you for registering"
+             })
+
+        // await sequelize.query(`INSERT INTO users(id,username,email,password) VALUES (?,?,?,?)`, {
+        //     replacements : ['b5a3f20d-6202-4159-abd9-0c33c6f70487', username,email,password], 
+        // })
+
+        res.status(201).json({
+            message : "User registered successfully", 
+    
+        
         })
     }
 
