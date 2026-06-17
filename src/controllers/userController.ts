@@ -2,7 +2,9 @@ import {Request,Response} from "express"
 import User from "../database/models/userModel"
 import bcrypt from 'bcrypt'
 import generateToken from "../services/generateToken"
-
+import generateOtp from "../services/generateOtp";
+import sendMail from "../services/sendMail";
+import findData from "../services/findData";
 
 class AuthController{
  static async registerUser(req:Request,res:Response){
@@ -27,7 +29,7 @@ class AuthController{
 
      static async login(req:Request,res:Response){
         // accept incoming data --> email, password
-        const {email, password} = req.body // password - manish --> hash() --> $234234324fjlsdf
+        const {email, password} = req.body // password - hello --> hash() --> $234234324fjlsdf
         if(!email || !password){
             res.status(400).json({
                 message : "Please provide email, password"
@@ -66,6 +68,41 @@ class AuthController{
         }
 
     }
+      static async handleForgotPassword(req:Request,res:Response){
+       
+        const {email} = req.body 
+        if(!email){
+            res.status(400).json({message : "Please provide email"})
+            return
+        }
+        
+        // const [user] = await User.findAll({
+        //     where : {
+        //         email : email
+        //     }
+        // })
+        const user = await findData(User,email)
+        if(!user){
+             res.status(404).json({
+                email : "Email not registered"
+            })
+            return
+        }
+        // otp pathaunu paryo aba, generate otp, mail sent
+        const otp = generateOtp()
+        await sendMail({
+            to : email, 
+            subject : "Digital Dokaan Password Change Request", 
+            text : `You just request to reset password. Here is your otp, ${otp}`
+        })
+        user.otp = otp.toString()
+        user.otpGeneratedTime = Date.now().toString()
+        await user.save()
+
+        res.status(200).json({
+            message : "Password Reset OTP sent!!!!"
+        })
+}
 }
 
 
