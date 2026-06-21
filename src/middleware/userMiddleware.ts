@@ -1,26 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken'
 import { envConfig } from "../config/config";
-import UserController from "../controllers/userController";
-import User from "../database/models/userModel";
 
-export enum Role{
-    Admin = 'admin', 
-    Customer = "customer"
-}
-
-interface IExtendedRequest extends Request{
-    user? : {
-        username : string, 
-        email : string, 
-        role : string, 
-        password : string, 
-        id : string
-
-    }
-}
 class UserMiddleware{
-    async isUserLoggedIn(req:IExtendedRequest,res:Response,next:NextFunction):Promise<void>{
+    async isUserLoggedIn(req:Request,res:Response,next:NextFunction):Promise<void>{
         // receive token 
        const token =  req.headers.authorization // manish
        if(!token){
