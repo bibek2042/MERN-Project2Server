@@ -1,9 +1,26 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken'
 import { envConfig } from "../config/config";
+import Usercontroller from "../controllers/userController"
+import User from "../database/models/userModel"
+
+export enum Role{
+    Admin = 'admin',
+    Customer = 'customer'
+}
+
+interface IExtendedRequest extends Request{
+    user? : {
+        username : string,
+        email : string,
+        role : string,
+        password : string,
+        id : string
+    }
+}
 
 class UserMiddleware{
-    async isUserLoggedIn(req:Request,res:Response,next:NextFunction):Promise<void>{
+    async isUserLoggedIn(req: IExtendedRequest,res:Response,next:NextFunction):Promise<void>{
         // receive token 
        const token =  req.headers.authorization // manish
        if(!token){
@@ -19,10 +36,29 @@ class UserMiddleware{
                 message : "Invalid token !!!"
             })
         }else{
-            console.log(result)
+            const userData = await User.findByPk(result.userId) // {email:"",pass:"",role:""}
+            if(!userData){
+                res.status(404).json({
+                    message : "No user wwith that userId"
+                })
+                return
+            }
+            req.user = userData
             next()
         }
     })
+    }
+    accessTo(...roles:Role[]){
+        return (req:IExtendedRequest,res:Response,next:NextFunction)=>{
+            let userRole = req.user?.role as Role
+        if(!roles.includes(userRole)){
+            res.status(403).json({
+                message : "You dont have permission "
+            })
+            return
+        }
+        next()
+        }
     }
 }
          
