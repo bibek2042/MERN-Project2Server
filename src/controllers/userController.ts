@@ -153,6 +153,7 @@ class AuthController{
         const otpGeneratedTime = data.otpGeneratedTime
         checkOtpExpiration(res,otpGeneratedTime,120000)
     }
+
     static async resetPassword(req:Request,res:Response){
         const {newPassword,confirmPassword,email} = req.body 
         if(!newPassword || !confirmPassword || !email){
@@ -173,7 +174,4 @@ class AuthController{
 
     }
 }
-
-
-
 export default AuthController

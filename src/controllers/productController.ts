@@ -86,7 +86,7 @@ class ProductController{
     }
     async updateProduct(req:Request,res:Response):Promise<void>{
         const {id} = req.params
-          const {productName,productDescription,productPrice,productTotalStock,discount,categoryId} = req.body ?? {};
+          const {productName,productDescription,productPrice,productTotalStock,discount,categoryId} = req.body 
         const filename = req.file ? req.file.filename : "https://weimaracademy.org/wp-content/uploads/2021/08/dummy-user.png"
         if(!productName || !productDescription || !productPrice || !productTotalStock  || !categoryId){
             res.status(400).json({
