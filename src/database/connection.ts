@@ -6,6 +6,7 @@ import Category from './models/categoryModel'
 import Order from './models/orderModel'
 import OrderDetails from './models/orderDetails'
 import Payment from './models/paymentModel'
+import Cart from './models/cartModel'
 
 const sequelize = new Sequelize(envConfig.connectionString as string,{
     models : [__dirname + '/models']
@@ -51,6 +52,12 @@ OrderDetails.belongsTo(Order,{foreignKey:'orderId'})
 // Product x OrderDetails
 Product.hasMany(OrderDetails,{foreignKey:'productId'})
 OrderDetails.belongsTo(Product,{foreignKey:'productId'})
+
+Product.hasMany(Cart,{foreignKey:'productId'})
+Cart.belongsTo(Product,{foreignKey:'productId'})
+
+User.hasMany(Cart,{foreignKey:'userId'})
+Cart.belongsTo(User,{foreignKey:'userId'})
 
 
 
