@@ -7,8 +7,6 @@ import { Server } from "socket.io";
 import jwt from 'jsonwebtoken'
 import User from "./src/database/models/userModel";
 import Order from "./src/database/models/orderModel";
-// import User from "./src/database/models/userModel";
-// import Order from "./src/database/models/orderModel";
 
 function startServer(){
     const port = envConfig.port || 4000
@@ -70,7 +68,6 @@ function startServer(){
                } 
             )
             if(findUser){
-                // console.log(findUser.socketId,"FS")
                 io.to(findUser.socketId).emit("success","order status updated successsfully")
             }else{
                 socket.emit("error","User is not online!!")
